@@ -6,9 +6,9 @@ A C++ console-based attedance system for hour-based lectures
 
 
 ## Developer 
-•Name: Danso Anthony kwesi 
-• ID: [01243931D]
-• Programme: HND Electrical Engineering (L200)
+-Name: Danso Anthony kwesi 
+-ID: [01243931D]
+-Programme: HND Electrical Engineering (L200)
 
 
 ### Project Timeline 
