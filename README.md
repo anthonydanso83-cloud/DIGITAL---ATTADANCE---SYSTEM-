@@ -77,8 +77,6 @@ A C++ console-based attedance system for hour-based lectures
 -Automatic backup system 
 
 
-##📁 File structure 
-
 
 
 
