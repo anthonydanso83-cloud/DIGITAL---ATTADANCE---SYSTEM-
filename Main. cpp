@@ -1,1 +1,114 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <fstream>
+#include <limits>
+#include <algorithm>
+
+// --- WEEK 1: Student Class ---
+class Student {
+public:
+    std::string id;
+    std::string name;
+
+    Student(std::string i, std::string n) : id(i), name(n) {}
+};
+
+// --- WEEK 2: AttendanceSession Class ---
+class AttendanceSession {
+public:
+    std::string courseCode;
+    std::string date;
+    std::vector<std::string> presentIDs;
+
+    AttendanceSession(std::string code, std::string d) : courseCode(code), date(d) {}
+
+    // --- WEEK 4: File Saving Logic ---
+    void saveToFile() {
+        std::string filename = "session_" + courseCode + "_" + date + ".txt";
+        std::ofstream outFile(filename);
+        if (outFile.is_open()) {
+            outFile << "Course: " << courseCode << " | Date: " << date << "\n";
+            outFile << "Present Student IDs:\n";
+            for (const auto& id : presentIDs) outFile << id << "\n";
+            outFile.close();
+            std::cout << "Session saved to " << filename << "\n";
+        }
+    }
+};
+
+// --- WEEK 3: Input Validation Helper ---
+int getValidInt(std::string prompt) {
+    int val;
+    while (true) {
+        std::cout << prompt;
+        if (std::cin >> val) return val;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid input. Please enter a number.\n";
+    }
+}
+
+// --- WEEK 4: Persistent Data Loading ---
+void loadStudents(std::vector<Student>& list) {
+    std::ifstream inFile("students.txt");
+    std::string id, name;
+    while (inFile >> id) {
+        std::getline(inFile >> std::ws, name); // Read rest of line as name
+        list.push_back(Student(id, name));
+    }
+    inFile.close();
+}
+
+void saveStudents(const std::vector<Student>& list) {
+    std::ofstream outFile("students.txt");
+    for (const auto& s : list) outFile << s.id << " " << s.name << "\n";
+    outFile.close();
+}
+
+// --- MAIN PROGRAM FLOW ---
+int main() {
+    std::vector<Student> studentList;
+    loadStudents(studentList); // Week 4 Init
+
+    int choice;
+    do {
+        std::cout << "\n--- Digital Attendance System ---\n";
+        std::cout << "1. Add Student (W1)\n2. View Students (W1)\n3. Mark Attendance (W2/W3)\n4. Exit (W4)\n";
+        choice = getValidInt("Selection: ");
+
+        if (choice == 1) {
+            std::string id, name;
+            std::cout << "Enter ID: "; std::cin >> id;
+            std::cin.ignore(); 
+            std::cout << "Enter Name: "; std::getline(std::cin, name);
+            studentList.push_back(Student(id, name));
+        } 
+        else if (choice == 2) {
+            std::cout << "\nID\t\tName\n-------------------\n";
+            for (const auto& s : studentList) std::cout << s.id << "\t\t" << s.name << "\n";
+        } 
+        else if (choice == 3) {
+            if (studentList.empty()) {
+                std::cout << "No students registered.\n";
+                continue;
+            }
+            std::string code, date;
+            std::cout << "Course Code (e.g. EE201): "; std::cin >> code;
+            std::cout << "Date (YYYY_MM_DD): "; std::cin >> date;
+            
+            AttendanceSession session(code, date);
+            for (const auto& s : studentList) {
+                char status;
+                std::cout << "Is " << s.name << " present? (y/n): ";
+                std::cin >> status;
+                if (tolower(status) == 'y') session.presentIDs.push_back(s.id);
+            }
+            session.saveToFile(); // Week 4 functionality
+        }
+    } while (choice != 4);
+
+    saveStudents(studentList); // Week 4 Final Save
+    return 0;
+}
 
